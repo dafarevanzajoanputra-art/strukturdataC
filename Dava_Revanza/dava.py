@@ -37,7 +37,7 @@ if menu == "Operasi Himpunan":
         st.write("Difference (B - A):", difference_ba)
         st.write("Symmetric Difference:", symmetric_diff)
 
-    # Visualisasi (diagram batang)
+    # Visualisasi diagram batang
     st.subheader("Visualisasi Jumlah Elemen")
 
     labels = ["A", "B", "A∪B", "A∩B"]
@@ -56,16 +56,16 @@ elif menu == "Word Count":
     text_input = st.text_area("Masukkan komentar sosial media:", 
                               " ")
 
-    # Preprocessing
+    # Preprocessing (data cleaning & normalisasi data)
     words = text_input.lower().split()
-    words = [word.strip(".,!?") for word in words]
+    words = [word.strip(".,!?()-_=+/") for word in words]
 
     word_count = Counter(words)
 
     st.subheader("Hasil Word Count")
     st.write(dict(word_count))
 
-    # Visualisasi
+    # Visualisasi diagram batang
     if word_count:
         fig, ax = plt.subplots()
         ax.bar(word_count.keys(), word_count.values())
