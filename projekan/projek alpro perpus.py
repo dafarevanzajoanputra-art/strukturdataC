@@ -2,59 +2,68 @@
 # Program console untuk mengelola data buku dengan fitur CRUD
 # serta peminjaman dan pengembalian buku
 
-
 # ===============================================
 # STRUCT / CLASS BUKU
 # ===============================================
-
 class Buku:
-    def __init__(self, code, judul, pengarang, genre):
+    def __init__(self, code, judul, pengarang, genre, stok=1, dipinjam=0):
         self.code = code
         self.judul = judul
         self.pengarang = pengarang
         self.genre = genre
-        self.dipinjam = False
+        self.total = stok        # jumlah tersedia
+        self.dipinjam = dipinjam      # jumlah yang sedang dipinjam
 
-
+    def tersedia(self):
+        return self.total - self.dipinjam
 # ===============================================
 # DATABASE (LIST)
 # ===============================================
-
-daftar = []
-
+daftar = [
+    Buku(101, "Laskar Pelangi", "Andrea Hirata", "Fiksi", stok=7, dipinjam=3), 
+    Buku(201, "Filosofi Teras", "Henry Manampiring", "Non-Fiksi", stok=9, dipinjam=1)   
+]
 
 # ===============================================
 # TOOLS
 # ===============================================
-
 def line(c, n):
     print(c * n)
 
-
 def bersihkan():
-    print("\033[2J\033[1;1H", end="")
-
+    print("\033[2J\033[1;1H", end="")  
 
 # ===============================================
 # FITUR SISTEM
 # ===============================================
-
 def tambah():
     bersihkan()
 
     print("Tambah Buku Baru")
     line("=", 40)
 
-    code = int(input("Kode Buku      : "))
+    try:
+        code = int(input("Kode Buku      : "))
+    except ValueError:
+        print("Kode harus berupa angka.")
+        return
+
     judul = input("Judul Buku     : ")
     pengarang = input("Pengarang      : ")
     genre = input("Genre          : ")
+    try:
+        stok = int(input("Stok           : "))
+        if stok < 0:
+            print("Stok tidak boleh negatif.")
+            return
+    except ValueError:
+        print("Stok harus berupa angka.")
+        return
 
-    b = Buku(code, judul, pengarang, genre)
+    b = Buku(code, judul, pengarang, genre, stok=stok)
     daftar.append(b)
 
     print("\nBuku berhasil ditambahkan.")
-
 
 def tampilSemua():
     bersihkan()
@@ -64,17 +73,16 @@ def tampilSemua():
         return
 
     print("DAFTAR BUKU")
-    line("=", 80)
+    line("=", 110)
 
-    print(f"{'Kode':<8}{'Judul':<25}{'Pengarang':<20}{'Genre':<15}{'Status':<12}")
-    line("=", 80)
+    print(f"{'Kode':<8}{'Judul':<30}{'Pengarang':<25}{'Genre':<15}{'Stok':<7}{'Dipinjam':<11}{'Status':<12}")
+    line("=", 110)
 
     for b in daftar:
-        status = "Dipinjam" if b.dipinjam else "Tersedia"
-        print(f"{b.code:<8}{b.judul:<25}{b.pengarang:<20}{b.genre:<15}{status:<12}")
+        status = "Kosong" if b.tersedia() == 0 else ("Tersedia" if b.tersedia() > 0 else "Tidak tersedia")
+        print(f"{b.code:<8}{b.judul:<30}{b.pengarang:<25}{b.genre:<15}{b.total:<7}{b.dipinjam:<11}{status:<12}")
 
-    line("=", 80)
-
+    line("=", 110)
 
 def cari(kode):
     for i in range(len(daftar)):
@@ -82,41 +90,58 @@ def cari(kode):
             return i
     return -1
 
-
 def pinjam():
     bersihkan()
 
-    kode = int(input("Masukkan kode buku yang ingin dipinjam: "))
+    try:
+        kode = int(input("Masukkan kode buku yang ingin dipinjam: "))
+    except ValueError:
+        print("Kode harus berupa angka.")
+        return
 
     i = cari(kode)
 
     if i == -1:
         print("Buku tidak ditemukan.")
-    elif daftar[i].dipinjam:
-        print("Buku sudah dipinjam.")
     else:
-        daftar[i].dipinjam = True
-        print("Buku berhasil dipinjam.")
-
+        buku = daftar[i]
+        if buku.tersedia() == 0:
+            print("Stok kosong. Buku tidak dapat dipinjam.")
+        else:
+            buku.total -= 1
+            buku.dipinjam += 1
+            print("Buku berhasil dipinjam.")
 
 def kembali():
     bersihkan()
 
-    kode = int(input("Masukkan kode buku yang dikembalikan: "))
+    try:
+        kode = int(input("Masukkan kode buku yang dikembalikan: "))
+    except ValueError:
+        print("Kode harus berupa angka.")
+        return
 
     i = cari(kode)
 
     if i == -1:
         print("Buku tidak ditemukan.")
     else:
-        daftar[i].dipinjam = False
-        print("Buku berhasil dikembalikan.")
-
+        buku = daftar[i]
+        if buku.dipinjam == 0:
+            print("Tidak ada salinan buku ini yang sedang dipinjam.")
+        else:
+            buku.dipinjam -= 1
+            buku.total += 1
+            print("Buku berhasil dikembalikan.")
 
 def update():
     bersihkan()
 
-    kode = int(input("Masukkan kode buku yang ingin diupdate: "))
+    try:
+        kode = int(input("Masukkan kode buku yang ingin diupdate: "))
+    except ValueError:
+        print("Kode harus berupa angka.")
+        return
 
     i = cari(kode)
 
@@ -128,6 +153,8 @@ def update():
     print("Judul    :", daftar[i].judul)
     print("Pengarang:", daftar[i].pengarang)
     print("Genre    :", daftar[i].genre)
+    print("Stok     :", daftar[i].stok)
+    print("Dipinjam :", daftar[i].dipinjam)
 
     line("=", 40)
 
@@ -145,13 +172,31 @@ def update():
     if genre != "":
         daftar[i].genre = genre
 
-    print("\nData buku diperbarui.")
+    stok_input = input("Stok Baru (angka) : ")
+    if stok_input != "":
+        try:
+            stok_baru = int(stok_input)
+            if stok_baru < 0:
+                print("Stok tidak boleh negatif. Perubahan stok dibatalkan.")
+            else:
+                # Pastikan stok minimal sama dengan jumlah yang sedang dipinjam
+                if stok_baru < daftar[i].dipinjam:
+                    print("Stok baru tidak boleh kurang dari jumlah yang sedang dipinjam.")
+                else:
+                    daftar[i].stok = stok_baru
+        except ValueError:
+            print("Input stok tidak valid. Perubahan stok dibatalkan.")
 
+    print("\nData buku diperbarui.")
 
 def hapus():
     bersihkan()
 
-    kode = int(input("Masukkan kode buku yang ingin dihapus: "))
+    try:
+        kode = int(input("Masukkan kode buku yang ingin dihapus: "))
+    except ValueError:
+        print("Kode harus berupa angka.")
+        return
 
     i = cari(kode)
 
@@ -159,15 +204,18 @@ def hapus():
         print("Buku tidak ditemukan.")
         return
 
+    # Opsional: cek jika masih ada yang dipinjam, minta konfirmasi (sederhana: tolak hapus)
+    if daftar[i].dipinjam > 0:
+        print("Buku masih memiliki salinan yang dipinjam. Tidak dapat dihapus.")
+        return
+
     daftar.pop(i)
 
     print("Buku berhasil dihapus.")
 
-
 # ===============================================
 # PROGRAM UTAMA
 # ===============================================
-
 def main():
 
     while True:
@@ -204,7 +252,6 @@ def main():
             print("Pilihan tidak valid.")
 
         input("\nTekan ENTER untuk kembali ke menu...")
-
 
 if __name__ == "__main__":
     main()

@@ -8,13 +8,13 @@ menu = st.sidebar.selectbox("Pilih Fitur", ["Operasi Himpunan", "Word Count"])
 
 # OPERASI HIMPUNAN
 if menu == "Operasi Himpunan":
-    st.title("Visualisasi Operasi Himpunan")
+    st.title("Operasi Himpunan")
 
     st.write("Masukkan elemen himpunan (pisahkan dengan koma)")
     set_a_input = st.text_input("Himpunan A", " ")
     set_b_input = st.text_input("Himpunan B", " ")
 
-    # Konversi ke set
+    # Konversi
     set_a = set(map(str.strip, set_a_input.split(",")))
     set_b = set(map(str.strip, set_b_input.split(",")))
 
@@ -37,42 +37,21 @@ if menu == "Operasi Himpunan":
         st.write("Difference (B - A):", difference_ba)
         st.write("Symmetric Difference:", symmetric_diff)
 
-    # Visualisasi sederhana (diagram batang)
-    st.subheader("Visualisasi Jumlah Elemen")
-
-    labels = ["A", "B", "A∪B", "A∩B"]
-    values = [len(set_a), len(set_b), len(union), len(intersection)]
-
-    fig, ax = plt.subplots()
-    ax.bar(labels, values)
-    ax.set_ylabel("Jumlah Elemen")
-
-    st.pyplot(fig)
-
 # WORD COUNT
 elif menu == "Word Count":
-    st.title("Visualisasi Word Count Komentar")
+    st.title("Word Count Komentar")
 
     text_input = st.text_area("Masukkan komentar sosial media:", 
                               " ")
 
-    # Preprocessing sederhana
+    # Preprocessing (data cleaning & normalisasi data)
     words = text_input.lower().split()
-    words = [word.strip(".,!?") for word in words]
+    words = [word.strip(".,!?()-_=+/") for word in words]
 
     word_count = Counter(words)
 
     st.subheader("Hasil Word Count")
     st.write(dict(word_count))
-
-    # Visualisasi
-    if word_count:
-        fig, ax = plt.subplots()
-        ax.bar(word_count.keys(), word_count.values())
-        ax.set_xticklabels(word_count.keys(), rotation=90)
-        ax.set_ylabel("Frekuensi")
-
-        st.pyplot(fig)
 
 # FOOTER
 st.sidebar.info("created by: Dava Revanza Joan Putra")
