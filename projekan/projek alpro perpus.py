@@ -4,11 +4,11 @@ class Buku:
         self.judul = judul
         self.pengarang = pengarang
         self.genre = genre
-        self.total = stok    
-        self.dipinjam = dipinjam      
+        self.stok = stok
+        self.dipinjam = dipinjam
 
     def tersedia(self):
-        return self.total - self.dipinjam
+        return self.stok - self.dipinjam
 
 daftar = [
     Buku(101, "Laskar Pelangi", "Andrea Hirata", "Fiksi", stok=7, dipinjam=3),
@@ -75,7 +75,7 @@ def tampilSemua():
 
     for b in daftar:
         status = "Kosong" if b.tersedia() == 0 else ("Tersedia" if b.tersedia() > 0 else "Tidak tersedia")
-        print(f"{b.code:<8}{b.judul:<30}{b.pengarang:<30}{b.genre:<25}{b.total:<7}{b.dipinjam:<11}{status:<12}")
+        print(f"{b.code:<8}{b.judul:<30}{b.pengarang:<30}{b.genre:<25}{b.stok:<7}{b.dipinjam:<11}{status:<12}")
 
     line("=", 120)
 
@@ -103,7 +103,7 @@ def pinjam():
         if buku.tersedia() == 0:
             print("Stok kosong. Buku tidak dapat dipinjam.")
         else:
-            buku.total -= 1
+            buku.stok -= 1
             buku.dipinjam += 1
             print("Buku berhasil dipinjam.")
 
@@ -126,12 +126,12 @@ def kembali():
             print("Tidak ada salinan buku ini yang sedang dipinjam.")
         else:
             buku.dipinjam -= 1
-            buku.total += 1
+            buku.stok += 1
             print("Buku berhasil dikembalikan.")
 
 def update():
     bersihkan()
-
+    
     try:
         kode = int(input("Masukkan kode buku yang ingin diupdate: "))
     except ValueError:
