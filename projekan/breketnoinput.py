@@ -1,11 +1,7 @@
 import random
 
 def turnamen():
-    n = int(input("Masukkan jumlah peserta: "))
-    peserta = []
-    for i in range(n):
-        nama = input(f"Nama peserta {i+1}: ")
-        peserta.append(nama)
+    peserta = ["dava", "nafis", "alfan", "rozaan", "rasya", "maman"]
 
     random.shuffle(peserta)
 
@@ -26,6 +22,6 @@ def turnamen():
         peserta = pemenang
         ronde += 1
 
-    print(f"\nJuara Turnamen: {peserta[0]}")
+    print(f"\nJuara Turnamen Biliard: {peserta[0]}")
 
 turnamen()
