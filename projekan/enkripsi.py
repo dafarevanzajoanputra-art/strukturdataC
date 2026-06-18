@@ -47,12 +47,10 @@ def hill_decrypt(ciphertext, key_matrix):
 
 # Contoh penggunaan
 key_matrix = np.array([[3, 3], [2, 5]])  # matriks kunci 2x2
-teks_asli = "jerman mengirmkan tank panzer"  
+teks_asli = input("masukan teks asli : ")
 
 ciphertext = hill_encrypt(teks_asli, key_matrix)
 dekripsi = hill_decrypt(ciphertext, key_matrix).rstrip('X') # untuk menghilangkan x pada akhir kalimat yang ganjil
 
-
-print("kalimat asli  :", teks_asli )
-print("hasil enkrip  :", ciphertext)
-print("hasil deskrip :", dekripsi)
+print("\nhasil enkrip  :", ciphertext)
+print("\nhasil deskrip :", dekripsi)
